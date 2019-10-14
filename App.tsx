@@ -1,21 +1,41 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import ZebraScanner from 'react-native-zebra-scanner';
+import { Text, View, StyleSheet} from 'react-native';
 
-export default function App() {
-  const [outputText, setOutputText] = useState('Hello World!');
-  return (
-    <View style={styles.container}>
-      <Text>{outputText}</Text>
-      <Button title="Change Text" onPress={() => setOutputText((outputText === 'Hello World!') ? 'The text has changed' : 'Hello World!')}/>
-    </View>
-  );
+const App = (): JSX.Element => {
+    const [codeScanned, setCodeScanned] = useState('');
+    //console.log('test');
+
+    const scanListener = (scannedCode: string): void => {
+        setCodeScanned(scannedCode);
+    } 
+
+    useEffect(() => {
+        //console.log('ZebraScanner', ZebraScanner);
+        const checkAvailability = async () => {
+            //await ZebraScanner.isAvailable();
+            ZebraScanner.addScanListener(scanListener);
+        }
+        checkAvailability();
+        return ZebraScanner.removeScanListener(scanListener);
+    }, []);
+
+    return (
+        <View style={styles.container}>
+            <Text>Hi</Text>
+            <Text>Code Scanned: {codeScanned}</Text>
+        </View>
+    );
+
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+})
+
+export default App;
